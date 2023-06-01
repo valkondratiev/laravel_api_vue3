@@ -1,4 +1,4 @@
-import './bootstrap';
+import * as bootstrap from 'bootstrap';
 import 'alpinejs';
 
 import { createApp } from 'vue/dist/vue.esm-bundler.js';
