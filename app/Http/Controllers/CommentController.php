@@ -2,13 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CommentResourse;
 use App\Models\Comment;
 use App\Models\Image;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
-    public function index(Request $request){
+    public function index(Request $request, Image $image) {
+
+        $request->validate([
+            'page' => 'required|integer'
+        ]);
+
+
+        $comments = $image->comments()->paginate();
+
+        return CommentResourse::collection($comments);
 
     }
 
