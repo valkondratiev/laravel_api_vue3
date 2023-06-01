@@ -47,8 +47,22 @@ class CommentController extends Controller
         ]);
     }
 
-    public function destroy() {
+    public function destroy(Image $image, Comment $comment) {
 
+        if($comment->image_id != $image->id) {
+            return response()->json([
+                'message' => 'No comment for image with received comment id'
+            ], 404);
+        }
+
+        if (auth('sanctum')->user()->id != $comment->user_id) {
+            return response()->json([
+                'message' => 'Permission denied'
+            ], 403);
+        }
+
+        $comment->delete();
+        return response()->noContent();
     }
 
 }
