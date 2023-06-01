@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ImageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -20,7 +21,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('image', ImageController::class)
         ->except(['update', 'show']);
+
+    Route::apiResource('image/{image}/comment', CommentController::class)->except(['update', 'show']);
 });
+
 
 Route::prefix('account')->group(function () {
 
