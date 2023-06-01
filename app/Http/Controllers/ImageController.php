@@ -7,6 +7,7 @@ use App\Http\Resources\ImageResource;
 use App\Models\Image;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -77,8 +78,14 @@ class ImageController extends Controller
         //
     }
 
-    public function destroy(string $id)
+    public function destroy(Image $image)
     {
-        //
+        $image->delete();
+
+        if(File::exists(public_path($image->path))) {
+            File::delete(public_path($image->path));
+        }
+
+        return response()->noContent();
     }
 }
