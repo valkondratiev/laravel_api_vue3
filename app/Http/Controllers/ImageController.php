@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ImageUploadRequest;
+use App\Http\Resources\ImageResource;
 use App\Models\Image;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -16,8 +17,13 @@ class ImageController extends Controller
      */
     public function index(Request $request)
     {
-        $page = $request->query('page');
-        return response('index image '.$page);
+        $request->validate([
+            'page' => 'required|integer'
+        ]);
+
+        $images = Image::paginate();
+
+        return ImageResource::collection($images);
     }
 
 
