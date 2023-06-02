@@ -22,7 +22,7 @@ class ImageController extends Controller
             'page' => 'required|integer'
         ]);
 
-        $images = Image::paginate();
+        $images = Image::paginate(10);
 
         return ImageResource::collection($images);
     }

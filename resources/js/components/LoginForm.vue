@@ -48,11 +48,10 @@ export default {
             }).then((response) => {
                 localStorage.setItem('sequreToken', response.data.token);
                 setAuthHeader(this, response.data.token);
-                router.push({ path: '/' });
+                router.push({ path: '/images' });
             })
         }
     }
-
 }
 </script>
 

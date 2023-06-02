@@ -20,7 +20,8 @@ class ImageResource extends JsonResource
             "url" => url($this->path),
             "date" => Carbon::make($this->date)->timestamp,
             "lat" => $this->lat,
-            "lng" => $this->lng
+            "lng" => $this->lng,
+            'username' => $this->user->login
         ];
     }
 }
