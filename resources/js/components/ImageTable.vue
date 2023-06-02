@@ -35,28 +35,39 @@
         </tbody>
     </table>
     <div class="pagination-wrapper">
-    <Pagination/>
+        <paginate
+            :page-count="pageCount"
+            :page-range="3"
+            :margin-pages="1"
+            :click-handler="changePage"
+            :prev-text="'Перд.'"
+            :next-text="'След.'"
+            :container-class="'pagination'"
+            :page-class="'page-item'"
+        />
     </div>
 </template>
 
 <script>
-import Pagination from "./Pagination.vue";
+import Pagination from 'vuejs-paginate-next';
 export default {
     name: "ImageTable",
-    components: {Pagination},
+    components: {paginate: Pagination,},
     data() {
         return {
             images:[],
-            currentPage:1
+            currentPage:1,
+            pageCount:0,
         }
     },
     created() {
         this.fetchImages()
     },
     methods: {
-        fetchImages() {
-        this.$axios.get('/api/image?page='+ this.currentPage).then((response) => {
+        fetchImages(page = 1) {
+        this.$axios.get('/api/image?page='+ page).then((response) => {
             this.images = response.data.data;
+            this.pageCount = response.data.meta.last_page;
             })
         },
         convertDate(date) {
@@ -69,7 +80,11 @@ export default {
         },
         previewImage(url) {
             window.open(url, '_blank').focus();
-        }
+        },
+        changePage (pageNum) {
+            this.fetchImages(pageNum);
+        },
+
     },
 }
 </script>
