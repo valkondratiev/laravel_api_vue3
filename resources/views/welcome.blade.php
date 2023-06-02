@@ -12,9 +12,9 @@
 
     @vite(['resources/css/app.css', 'resources/scss/app.scss', 'resources/js/app.js'])
 </head>
-<body class="antialiased">
+<body>
 <div class="min-h-screen bg-gray-100" id="app">
-    <router-view />
+    <router-view name="app" />
 </div>
 </body>
 </html>
