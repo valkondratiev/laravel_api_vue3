@@ -12,7 +12,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr v-for="(image, index) in images" :key="image.id">
+            <tr v-for="(image, index) in images" :key="image.id" @click="selectRow(image.id)" :class="[image.id === this.selectedImage ? 'highlight' : '']">
                 <th scope="row">{{ image.id }}</th>
                 <td>{{ image.username }}</td>
                 <td>{{ image.lat }}</td>
@@ -54,12 +54,13 @@
 import Pagination from 'vuejs-paginate-next';
 export default {
     name: "ImageTable",
-    components: {paginate: Pagination,},
+    components: {paginate: Pagination},
     data() {
         return {
             images:[],
             currentPage:1,
             pageCount:0,
+            selectedImage: null
         }
     },
     created() {
@@ -90,7 +91,10 @@ export default {
         changePage (pageNum) {
             this.fetchImages(pageNum);
         },
-
+        selectRow(image){
+            this.selectedImage = image;
+            console.log('select');
+        }
     },
 }
 </script>
@@ -104,4 +108,9 @@ export default {
 .table-wrap {
     min-height: 520px;
 }
+
+table.table.table-hover.table-bordered.table-sm tr.highlight td, tr.highlight th {
+    background-color: #d6f1d4;
+}
+
 </style>
