@@ -1,72 +1,83 @@
 <template>
     <h5>Комментарии :</h5>
-    <div class="col-sm-5 col-md-6 col-12 pb-4" style="display: flex;flex-direction: column;align-items: center;width: 100%; overflow-y: scroll; height: 100%" >
-        <div class="comment mt-4 text-justify float-left" style="max-width: 680px;">
-            <h4>Jhon Doe</h4>
-            <span>- 20 October, 2018</span>
+    <div id="comments-container" class="col-sm-5 col-md-6 col-12 pb-4 overflow-auto" ref="scrollComponent" style="display: flex;flex-direction: column;align-items: center;width: 100%;height: calc(100% - 606px);" >
+        <div v-if="comments.length" v-for="(comment, index) in comments" :class="[ index % 2 == 0 ? 'test text-justify darker mt-4 float-right' : 'test comment mt-4 text-justify float-left']" style="width: 600px;">
+            <h4>{{ comment.author + ' ' + comment.id }}</h4>
+            <span> - {{ convertDate(comment.date) }}</span>
             <br>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Accusamus numquam assumenda hic aliquam vero sequi velit molestias doloremque molestiae dicta?</p>
+            <p>{{ comment.text }}</p>
         </div>
-        <div class="text-justify darker mt-4 float-right" style="max-width: 680px">
-            <h4>Rob Simpson</h4>
-            <span>- 20 October, 2018</span>
-            <br>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Accusamus numquam assumenda hic aliquam vero sequi velit molestias doloremque molestiae dicta?</p>
-        </div>
-        <div class="comment mt-4 text-justify float-left" style="max-width: 680px">
-            <h4>Jhon Doe</h4>
-            <span>- 20 October, 2018</span>
-            <br>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Accusamus numquam assumenda hic aliquam vero sequi velit molestias doloremque molestiae dicta?</p>
-        </div>
-        <div class="text-justify darker mt-4 float-right" style="max-width: 680px">
-            <h4>Rob Simpson</h4>
-            <span>- 20 October, 2018</span>
-            <br>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Accusamus numquam assumenda hic aliquam vero sequi velit molestias doloremque molestiae dicta?</p>
-        </div>
-        <div class="comment mt-4 text-justify float-left" style="max-width: 680px">
-            <h4>Jhon Doe</h4>
-            <span>- 20 October, 2018</span>
-            <br>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Accusamus numquam assumenda hic aliquam vero sequi velit molestias doloremque molestiae dicta?</p>
-        </div>
-        <div class="text-justify darker mt-4 float-right" style="max-width: 680px">
-            <h4>Rob Simpson</h4>
-            <span>- 20 October, 2018</span>
-            <br>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Accusamus numquam assumenda hic aliquam vero sequi velit molestias doloremque molestiae dicta?</p>
-        </div>
-        <div class="comment mt-4 text-justify float-left" style="max-width: 680px">
-            <h4>Jhon Doe</h4>
-            <span>- 20 October, 2018</span>
-            <br>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Accusamus numquam assumenda hic aliquam vero sequi velit molestias doloremque molestiae dicta?</p>
-        </div>
-        <div class="text-justify darker mt-4 float-right" style="max-width: 680px">
-            <h4>Rob Simpson</h4>
-            <span>- 20 October, 2018</span>
-            <br>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Accusamus numquam assumenda hic aliquam vero sequi velit molestias doloremque molestiae dicta?</p>
-        </div>
-        <div class="comment mt-4 text-justify float-left" style="max-width: 680px">
-            <h4>Jhon Doe</h4>
-            <span>- 20 October, 2018</span>
-            <br>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Accusamus numquam assumenda hic aliquam vero sequi velit molestias doloremque molestiae dicta?</p>
-        </div>
-        <div class="text-justify darker mt-4 float-right" style="max-width: 680px">
-            <h4>Rob Simpson</h4>
-            <span>- 20 October, 2018</span>
-            <br>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Accusamus numquam assumenda hic aliquam vero sequi velit molestias doloremque molestiae dicta?</p>
-        </div>
+        <div v-else style="margin-top: 50px; font-style: italic"> Комментарии отсутствуют... </div>
     </div>
 </template>
 
 <script>
 export default {
-    name: "Comments"
+    name: "Comments",
+    data(){
+        return {
+            comments : [],
+            currentPage:0,
+            lastPage:0,
+        }
+    },
+    props: {
+        currentImage:{
+            default:null
+        }
+    },
+    methods:{
+        fetchComments() {
+            let page = 1;
+            if(this.currentPage!=0 && this.lastPage!=0 && this.currentPage < this.lastPage) {
+                page = this.currentPage + 1;
+            }
+            if(this.currentPage === this.lastPage  && this.currentPage!==0) {
+                return;
+            }
+            this.$axios.get('/api/image/'+this.currentImage+'/comment?page=' + page).then((response) => {
+                if(response.data.meta.current_page > 1) {
+                    this.comments = this.comments.concat(response.data.data) ;
+                } else {
+                    this.comments = response.data.data;
+                }
+                if(response.data.data.length) {
+                    this.currentPage = response.data.meta.current_page;
+                    this.lastPage = response.data.meta.last_page;
+                }
+            })
+        },
+        convertDate(date) {
+            let options = {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit"
+            }
+            return new Date(date * 1000).toLocaleDateString('ru-RU', options)
+        },
+        handleScroll() {
+            let element = document.getElementById("comments-container");
+            if(element.scrollTop + element.offsetHeight >= element.scrollHeight) {
+                this.fetchComments();
+            }
+        },
+    },
+    watch: {
+        currentImage: {
+            handler: function(newSelected, oldSelected) {
+                this.comments = [];
+                this.currentPage = 0;
+                this.lastPage = 0;
+                this.fetchComments();
+            },
+        }
+    },
+    mounted() {
+        document.getElementById("comments-container").addEventListener("scroll", this.handleScroll);
+    },
+
 }
 </script>
 
@@ -78,18 +89,19 @@ body{
 
 
 .darker{
-    border: 1px solid #ecb21f;
-    background-color: black;
+    border: 1px solid #0b074a;
+    background-color: #2a205e;
     float: right;
     border-radius: 5px;
     padding-left: 40px;
     padding-right: 30px;
     padding-top: 10px;
+
 }
 
 .comment{
-    border: 1px solid rgba(16, 46, 46, 1);
-    background-color: rgba(16, 46, 46, 0.973);
+    border: 1px solid rgb(16, 46, 46, 1);
+    background-color: rgb(9 120 110 / 97%);
     float: left;
     border-radius: 5px;
     padding-left: 40px;

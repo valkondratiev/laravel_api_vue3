@@ -19,7 +19,8 @@ class CommentResourse extends JsonResource
             'id' => $this->id,
             'imageId' => $this->image_id,
             'date' => Carbon::make($this->created_at)->timestamp,
-            'text' => $this->text
+            'text' => $this->text,
+            'author' => $this->user->login
         ];
     }
 }

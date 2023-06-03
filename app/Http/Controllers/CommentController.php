@@ -16,7 +16,7 @@ class CommentController extends Controller
         ]);
 
 
-        $comments = $image->comments()->paginate();
+        $comments = $image->comments()->paginate(10);
 
         return CommentResourse::collection($comments);
 

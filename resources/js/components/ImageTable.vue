@@ -42,7 +42,7 @@
             :page-range="3"
             :margin-pages="1"
             :click-handler="changePage"
-            :prev-text="'Перд.'"
+            :prev-text="'Пред.'"
             :next-text="'След.'"
             :container-class="'pagination'"
             :page-class="'page-item'"
@@ -74,7 +74,10 @@ export default {
             }
             this.images = response.data.data;
             this.pageCount = response.data.meta.last_page;
-            this.currentPage = response.data.meta.current_page
+            this.currentPage = response.data.meta.current_page;
+            if(response.data.data.length){
+                this.selectedImage = response.data.data[0].id;
+            }
             })
         },
         convertDate(date) {
@@ -93,9 +96,17 @@ export default {
         },
         selectRow(image){
             this.selectedImage = image;
-            console.log('select');
         }
     },
+
+    watch: {
+        selectedImage: {
+            handler: function(newSelected, oldSelected) {
+                this.$emit('changeImage', newSelected)
+            },
+        },
+    },
+    emits: ["changeImage"],
 }
 </script>
 
@@ -111,6 +122,9 @@ export default {
 
 table.table.table-hover.table-bordered.table-sm tr.highlight td, tr.highlight th {
     background-color: #d6f1d4;
+}
+tr {
+    white-space: nowrap;
 }
 
 </style>

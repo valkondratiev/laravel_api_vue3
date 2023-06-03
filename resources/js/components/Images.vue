@@ -1,7 +1,7 @@
 <template>
     <div class="image-wrapper" style="width: 100%">
-    <ImageTable/>
-    <Comments/>
+    <ImageTable @changeImage="changeImageComments($event)"/>
+    <Comments :currentImage="currentImage"/>
         </div>
 </template>
 
@@ -9,8 +9,18 @@
 import ImageTable from "./ImageTable.vue";
 import Comments from "./Comments.vue";
 export default {
+    data(){
+        return {
+            currentImage: null,
+        }
+    },
     name: "Images",
-    components: {Comments, ImageTable}
+    components: {Comments, ImageTable},
+    methods:{
+        changeImageComments(currentImage) {
+            this.currentImage = currentImage;
+        },
+    },
 }
 </script>
 
