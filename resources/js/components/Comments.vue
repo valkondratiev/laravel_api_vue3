@@ -2,7 +2,7 @@
     <h5>Комментарии :</h5>
     <div id="comments-container" class="col-sm-5 col-md-6 col-12 pb-4 overflow-auto" ref="scrollComponent" style="display: flex;flex-direction: column;align-items: center;width: 100%;height: calc(100% - 606px);" >
         <div v-if="comments.length" v-for="(comment, index) in comments" :class="[ index % 2 == 0 ? 'test text-justify darker mt-4 float-right' : 'test comment mt-4 text-justify float-left']" style="width: 600px;">
-            <h4>{{ comment.author + ' ' + comment.id }}</h4>
+            <h4>{{ comment.author + ' (id:' + comment.id + ')' }}</h4>
             <span> - {{ convertDate(comment.date) }}</span>
             <br>
             <p>{{ comment.text }}</p>
@@ -91,7 +91,6 @@ body{
 .darker{
     border: 1px solid #0b074a;
     background-color: #2a205e;
-    float: right;
     border-radius: 5px;
     padding-left: 40px;
     padding-right: 30px;
@@ -102,7 +101,6 @@ body{
 .comment{
     border: 1px solid rgb(16, 46, 46, 1);
     background-color: rgb(9 120 110 / 97%);
-    float: left;
     border-radius: 5px;
     padding-left: 40px;
     padding-right: 30px;

@@ -2,7 +2,8 @@ import {createRouter, createWebHistory} from 'vue-router'
 
 import LoginForm from '../components/LoginForm.vue'
 import App from '../components/App.vue'
-import Images from "../components/Images.vue";
+import Images from "../components/Images.vue"
+import Users from "../components/Users.vue";
 
 const routes = [
     {
@@ -18,7 +19,14 @@ const routes = [
                 components: {
                     sidebar: Images
                 }
-            }
+            },
+            {
+                name: "index.users",
+                path: "users",
+                components: {
+                    sidebar: Users
+                }
+            },
         ]
     },
 
