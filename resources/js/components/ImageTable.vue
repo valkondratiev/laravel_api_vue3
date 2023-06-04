@@ -68,16 +68,16 @@ export default {
     },
     methods: {
         fetchImages(page = 1) {
-        this.$axios.get('/api/image?page='+ page).then((response) => {
-            if(response.data.meta.last_page < page && response.data.meta.last_page !== 0 ) {
-                this.fetchImages(response.data.meta.last_page);
-            }
-            this.images = response.data.data;
-            this.pageCount = response.data.meta.last_page;
-            this.currentPage = response.data.meta.current_page;
-            if(response.data.data.length){
-                this.selectedImage = response.data.data[0].id;
-            }
+            this.$axios.get('/api/image?page=' + page).then((response) => {
+                if (response.data.meta.last_page < page && response.data.meta.last_page !== 0) {
+                    this.fetchImages(response.data.meta.last_page);
+                }
+                this.images = response.data.data;
+                this.pageCount = response.data.meta.last_page;
+                this.currentPage = response.data.meta.current_page;
+                if (response.data.data.length) {
+                    this.selectedImage = response.data.data[0].id;
+                }
             })
         },
         convertDate(date) {

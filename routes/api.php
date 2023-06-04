@@ -3,6 +3,8 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ImageController;
+use App\Http\Controllers\UsersController;
+use App\Http\Middleware\CheckAdminRole;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +25,9 @@ Route::middleware('auth:sanctum')->group(function () {
         ->except(['update', 'show']);
 
     Route::apiResource('image/{image}/comment', CommentController::class)->except(['update', 'show']);
+
+    Route::get('/users',[UsersController::class, 'index'])->middleware(CheckAdminRole::class);
+    Route::patch('/users/{user}', [UsersController::class, 'update'])->middleware(CheckAdminRole::class);
 });
 
 
