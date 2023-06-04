@@ -33,6 +33,9 @@ class AccountController extends Controller
 
         $user = User::where('login', $request->login)->firstOrFail();
         if (Hash::check($request->password, $user->password)) {
+            if($user->blocked === 1 ) {
+                throw new AuthorizationException('Your account is banned');
+            }
 
             $user->tokens()->delete();
 

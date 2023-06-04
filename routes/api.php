@@ -5,6 +5,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\UsersController;
 use App\Http\Middleware\CheckAdminRole;
+use App\Http\Middleware\CheckBlockedUsers;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', CheckBlockedUsers::class])->group(function () {
 
     Route::apiResource('image', ImageController::class)
         ->except(['update', 'show']);
