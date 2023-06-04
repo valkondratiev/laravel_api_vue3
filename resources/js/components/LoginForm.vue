@@ -3,21 +3,22 @@
         <div class="container">
             <div class="row d-flex justify-content-center">
                 <div class="col-4 bd-example">
-                            <form>
-                                <div class="mb-3">
-                                    <label for="exampleInputEmail1" class="form-label">Логин</label>
-                                    <input v-model="login" class="form-control" id="login-input">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="exampleInputPassword1" class="form-label">Пароль</label>
-                                    <input v-model="password" type="password" class="form-control" id="exampleInputPassword1">
-                                </div>
-                                <div class="text-center">
-                                    <button @click='submitLogin' class="btn btn-primary">Войти</button>
-                                </div>
-                            </form>
+                    <form>
+                        <div class="mb-3">
+                            <label for="exampleInputEmail1" class="form-label">Логин</label>
+                            <input v-model="login" class="form-control" id="login-input">
+                        </div>
+                        <div class="mb-3">
+                            <label for="exampleInputPassword1" class="form-label">Пароль</label>
+                            <input v-model="password" type="password" class="form-control" id="exampleInputPassword1">
+                        </div>
+                        <div class="text-center">
+                            <button @click='submitLogin' class="btn btn-primary">Войти</button>
+                        </div>
+                    </form>
                 </div>
             </div>
+            <Preloader :load="load"/>
         </div>
     </div>
 </template>
@@ -25,7 +26,11 @@
 <script>
 import setAuthHeader from "../../utils/setAuthHeader.js";
 import router from "../router/index.js";
+import Preloader from "./Preloader.vue";
 export default {
+    components:{
+        Preloader
+    },
     data() {
         return {
             login: '',
@@ -36,20 +41,22 @@ export default {
     },
 
     methods: {
-          submitLogin(e) {
-             e.preventDefault();
+        submitLogin(e) {
+            e.preventDefault();
             //validate data
-              let loginAxios = this.$axios.create();
-              delete loginAxios.defaults.headers.Authorization;
+            this.load = true;
+            let loginAxios = this.$axios.create();
+            delete loginAxios.defaults.headers.Authorization;
 
-              loginAxios.post('/api/account/signin', {
+            loginAxios.post('/api/account/signin', {
                 login: this.login,
                 password: this.password
             }).then((response) => {
                 localStorage.setItem('sequreToken', response.data.token);
                 setAuthHeader(this, response.data.token);
-                router.push({ path: '/images' });
+                router.push({path: '/images'});
             })
+                .finally(()=> this.load = false)
         }
     }
 }

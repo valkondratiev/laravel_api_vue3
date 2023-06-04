@@ -5,7 +5,6 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\UsersController;
 use App\Http\Middleware\CheckAdminRole;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*

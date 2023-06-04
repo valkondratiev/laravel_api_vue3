@@ -1,24 +1,30 @@
 <template>
-    <h5>Комментарии :</h5>
-    <div id="comments-container" class="col-sm-5 col-md-6 col-12 pb-4 overflow-auto" ref="scrollComponent" style="display: flex;flex-direction: column;align-items: center;width: 100%;height: calc(100% - 606px);" >
-        <div v-if="comments.length" v-for="(comment, index) in comments" :class="[ index % 2 == 0 ? 'test text-justify darker mt-4 float-right' : 'test comment mt-4 text-justify float-left']" style="width: 600px;">
-            <h4>{{ comment.author + ' (id:' + comment.id + ')' }}</h4>
-            <span> - {{ convertDate(comment.date) }}</span>
-            <br>
-            <p>{{ comment.text }}</p>
+        <h5>Комментарии :</h5>
+        <div id="comments-container" class="col-sm-5 col-md-6 col-12 pb-4 overflow-auto" ref="scrollComponent" style="display: flex;flex-direction: column;align-items: center;width: 100%;height: calc(100% - 606px);">
+            <div v-if="comments.length" v-for="(comment, index) in comments" :class="[ index % 2 == 0 ? 'test text-justify darker mt-4 float-right' : 'test comment mt-4 text-justify float-left']" style="width: 600px;">
+                <h4>{{ comment.author + ' (id:' + comment.id + ')' }}</h4>
+                <span> - {{ convertDate(comment.date) }}</span>
+                <br>
+                <p>{{ comment.text }}</p>
+            </div>
+            <div v-else style="margin-top: 50px; font-style: italic"> Комментарии отсутствуют... </div>
+            <Preloader :load="loading"/>
         </div>
-        <div v-else style="margin-top: 50px; font-style: italic"> Комментарии отсутствуют... </div>
-    </div>
 </template>
 
 <script>
+import Preloader from "./Preloader.vue";
 export default {
     name: "Comments",
+    components: {
+        Preloader
+    },
     data(){
         return {
             comments : [],
             currentPage:0,
             lastPage:0,
+            loading:false
         }
     },
     props: {
@@ -28,11 +34,14 @@ export default {
     },
     methods:{
         fetchComments() {
+            this.loading = true;
             let page = 1;
             if(this.currentPage!=0 && this.lastPage!=0 && this.currentPage < this.lastPage) {
                 page = this.currentPage + 1;
+                document.getElementById('comments-container').classList.remove("overflow-auto");
             }
             if(this.currentPage === this.lastPage  && this.currentPage!==0) {
+                this.loading = false;
                 return;
             }
             this.$axios.get('/api/image/'+this.currentImage+'/comment?page=' + page).then((response) => {
@@ -45,7 +54,10 @@ export default {
                     this.currentPage = response.data.meta.current_page;
                     this.lastPage = response.data.meta.last_page;
                 }
-            })
+            }).finally(()=> {
+                this.loading = false;
+                document.getElementById('comments-container').classList.add("overflow-auto")
+            });
         },
         convertDate(date) {
             let options = {
@@ -146,6 +158,9 @@ form{
     background-color: rgba(16, 46, 46, 0.973);
     border-radius: 5px;
     padding: 20px;
+}
+#comments-container {
+    position: relative;
 }
 
 </style>

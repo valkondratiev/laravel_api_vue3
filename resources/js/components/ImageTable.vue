@@ -35,6 +35,7 @@
             </tr>
             </tbody>
         </table>
+        <Preloader :load="loading"/>
     </div>
     <div class="pagination-wrapper">
         <paginate
@@ -52,15 +53,20 @@
 
 <script>
 import Pagination from 'vuejs-paginate-next';
+import Preloader from "./Preloader.vue";
 export default {
     name: "ImageTable",
-    components: {paginate: Pagination},
+    components: {
+        paginate: Pagination,
+        Preloader
+    },
     data() {
         return {
             images:[],
             currentPage:1,
             pageCount:0,
-            selectedImage: null
+            selectedImage: null,
+            loading : false,
         }
     },
     created() {
@@ -68,6 +74,7 @@ export default {
     },
     methods: {
         fetchImages(page = 1) {
+            this.loading = true;
             this.$axios.get('/api/image?page=' + page).then((response) => {
                 if (response.data.meta.last_page < page && response.data.meta.last_page !== 0) {
                     this.fetchImages(response.data.meta.last_page);
@@ -79,14 +86,17 @@ export default {
                     this.selectedImage = response.data.data[0].id;
                 }
             })
+                .finally(() => this.loading = false);
         },
         convertDate(date) {
             return new Date(date * 1000).toISOString().slice(0, 16).replace('T',' ')
         },
         deleteImage(id) {
+            this.loading = true;
             this.$axios.delete('/api/image/'+ id).then((response) => {
                 this.fetchImages(this.currentPage);
             })
+                .finally(() => this.loading = false);
         },
         previewImage(url) {
             window.open(url, '_blank').focus();
@@ -118,6 +128,7 @@ export default {
 }
 .table-wrap {
     min-height: 520px;
+    position: relative;
 }
 
 table.table.table-hover.table-bordered.table-sm tr.highlight td, tr.highlight th {

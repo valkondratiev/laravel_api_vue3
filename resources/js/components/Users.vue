@@ -39,16 +39,23 @@
                 </tr>
                 </tbody>
             </table>
+            <Preloader :load="loading"/>
         </div>
+        <Preloader :load="loading"/>
     </div>
 </template>
 
 <script>
+import Preloader from "./Preloader.vue";
 export default {
     name: "Users",
+    components: {
+        Preloader
+    },
     data() {
         return {
             users:[],
+            loading:false,
         }
     },
     mounted() {
@@ -56,17 +63,21 @@ export default {
     },
     methods:{
         fetchUsers() {
+            this.loading = true;
             this.$axios.get('/api/users').then((response) => {
                 this.users = response.data;
-            });
+            })
+                .finally(() => this.loading = false);
         },
         updateUser(field, user) {
+            this.loading = true;
             this.$axios.patch('/api/users/' + user.id, {[field]: user[field]}).then((response) => {
                 this.fetchUsers();
             }).catch((error) => {
                 this.fetchUsers();
                 console.log(error.toJSON());
             })
+                .finally(() => this.loading = false);
         }
     },
 }
@@ -76,6 +87,9 @@ export default {
 
 .container-users {
     width: 100%;
+}
+.container-users{
+    position: relative;
 }
 
 </style>

@@ -1,5 +1,4 @@
 import axios from 'axios'
-import setAuthHeader from "../../utils/setAuthHeader.js";
 import router from "../router/index.js";
 
 export default {
