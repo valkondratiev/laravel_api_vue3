@@ -1,4 +1,5 @@
 <template>
+    <ErrorBox :text="error" @errorClose="errorRead()"/>
     <div class="vh-100 d-flex justify-content-center align-items-center">
         <div class="container">
             <div class="row d-flex justify-content-center">
@@ -27,16 +28,20 @@
 import setAuthHeader from "../../utils/setAuthHeader.js";
 import router from "../router/index.js";
 import Preloader from "./Preloader.vue";
+import ErrorBox from "./ErrorBox.vue";
+
 export default {
     components:{
-        Preloader
+        Preloader,
+        ErrorBox
     },
     data() {
         return {
             login: '',
             password: '',
             validationErrors: [],
-            load: false
+            load: false,
+            error:''
         }
     },
 
@@ -47,6 +52,7 @@ export default {
             this.load = true;
             let loginAxios = this.$axios.create();
             delete loginAxios.defaults.headers.Authorization;
+            loginAxios.interceptors.response = this.$axios.interceptors.response;
 
             loginAxios.post('/api/account/signin', {
                 login: this.login,
@@ -57,7 +63,15 @@ export default {
                 router.push({path: '/images'});
             })
                 .finally(()=> this.load = false)
-        }
+        },
+        errorRead(){
+            this.error = '';
+        },
+    },
+    mounted() {
+        this.emitter.on("newError", msg => {
+            this.error = msg;
+        });
     }
 }
 </script>

@@ -1,14 +1,35 @@
 <template>
     <main>
-    <Sidebar/>
+        <ErrorBox :text="error" @errorClose="errorRead()"/>
+        <Sidebar/>
         <router-view name="sidebar"/>
-</main>
+    </main>
 </template>
 
 <script>
 import Sidebar from "./Sidebar.vue";
+import ErrorBox from "./ErrorBox.vue";
 export default {
-    components: {Sidebar}
+    components: {
+        Sidebar,
+        ErrorBox
+    },
+    data() {
+        return {
+            error:''
+        }
+    },
+    methods: {
+        errorRead(){
+            this.error = '';
+        },
+    },
+    mounted() {
+        this.emitter.on("newError", msg => {
+            this.error = msg;
+        });
+    }
+
 }
 
 </script>

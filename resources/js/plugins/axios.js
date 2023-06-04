@@ -22,6 +22,7 @@ export default {
                     delete app.config.globalProperties.$axios.defaults.headers.Authorization;
                     router.push({path: '/login'})
                 }
+                app.config.globalProperties.emitter.emit("newError", error.response.data.message);
             }
         );
     }
